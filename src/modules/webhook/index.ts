@@ -1,4 +1,8 @@
+import dayjs from "dayjs";
+import Joi from "joi";
+
 import { Constructor } from "../../types";
+import { validWebhookEventType } from "../../types/schema";
 
 import {
   PostResendWebhookNotificationParams,
@@ -22,6 +26,25 @@ export function mixinWebhook<T extends Constructor>(
         url: "/open-api/entity/webhook/resend",
         method: "POST",
         params,
+        schema: Joi.object({
+          webhookId: Joi.string().required(),
+          eventType: validWebhookEventType.required(),
+          resendFromDateTime: Joi.number().required(),
+        })
+          .custom((value, helper) => {
+            const maxDiffInDay = 180;
+            const { resendFromDateTime } = value;
+            if (
+              dayjs(new Date()).diff(resendFromDateTime, "day", true) >
+              maxDiffInDay
+            ) {
+              return helper.message({
+                custom: `Invalid datetime range. Please adjust ≤ ${maxDiffInDay} days`,
+              });
+            }
+            return value;
+          })
+          .required(),
       });
     }
   };

@@ -43,7 +43,7 @@ export type GetMirrorXOrderListResponse = SuccessPaginatedResponse<{
 export type GetMirrorXAvailableAmountParams = {
   mirrorXLinkId: string;
   coinSymbol: string;
-  orderType: MirrorXOrderType.Delegation | MirrorXOrderType.Settlement;
+  orderType: MirrorXOrderType.Delegation | MirrorXOrderType.Undelegation;
 };
 
 export type GetMirrorXAvailableAmountResponse = SuccessResponse<{
@@ -67,7 +67,7 @@ export type GetMirrorXAssetPositionResponse = SuccessPaginatedResponse<{
 export type PostMirrorXOrderParams = {
   amount: string;
   coinSymbol: string;
-  mirrorXLinkId: number;
+  mirrorXLinkId: string;
   orderType: MirrorXOrderType.Delegation | MirrorXOrderType.Undelegation;
   requestId: string;
 };

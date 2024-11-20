@@ -1,6 +1,7 @@
 import querystring from "querystring";
 
 import axios, { AxiosError, AxiosInstance } from "axios";
+import Joi from "joi";
 
 import { MirrorXMethods, mixinMirrorX } from "./modules/mirrorx";
 import { mixinSubWallet, SubWalletMethods } from "./modules/subwallet";
@@ -14,12 +15,26 @@ type APIClientOptions = {
   apiKey: string;
   apiSecret: string;
   baseURL?: string;
+  shouldValidate?: boolean;
 };
 
 const BaseClass = class {
   axiosInstance: AxiosInstance;
+  shouldValidate: boolean;
 
   constructor(options: APIClientOptions) {
+    Joi.assert(
+      options,
+      Joi.object({
+        apiKey: Joi.string().required(),
+        apiSecret: Joi.string().required(),
+      }).required(),
+      {
+        allowUnknown: true,
+      }
+    );
+
+    this.shouldValidate = options.shouldValidate !== false ? true : false;
     this.axiosInstance = axios.create({
       baseURL: options.baseURL || "https://open-api.ceffu.com",
     });
@@ -53,11 +68,16 @@ const BaseClass = class {
     url,
     method,
     params,
+    schema,
   }: {
     url: string;
     method: string;
     params?: Record<string, unknown>;
+    schema?: Joi.Schema;
   }) {
+    if (this.shouldValidate && schema) {
+      Joi.assert(params, schema, { allowUnknown: true });
+    }
     try {
       const { data, headers } = await this.axiosInstance.request({
         url,

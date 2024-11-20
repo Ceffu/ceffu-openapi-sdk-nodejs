@@ -1,4 +1,9 @@
+import dayjs from "dayjs";
+import Joi from "joi";
+
 import { Constructor } from "../../types";
+import { MirrorXOrderType } from "../../types/enum";
+import { validMirrorXOrderType, validPagination } from "../../types/schema";
 
 import {
   GetMirrorXAssetPositionParams,
@@ -42,6 +47,7 @@ export function mixinMirrorX<T extends Constructor>(
         url: "/open-api/v1/mirrorX/mirrorXLinkId/list",
         method: "GET",
         params,
+        schema: validPagination.optional(),
       });
     }
 
@@ -52,6 +58,25 @@ export function mixinMirrorX<T extends Constructor>(
         url: "/open-api/v1/mirrorX/order/list",
         method: "GET",
         params,
+        schema: Joi.object({
+          mirrorXLinkId: Joi.string().required(),
+          startTime: Joi.number().required(),
+          endTime: Joi.number().required(),
+          coinSymbol: Joi.string().optional(),
+          orderType: validMirrorXOrderType.optional(),
+        })
+          .custom((value, helper) => {
+            const maxDiffInDay = 30;
+            const { startTime, endTime } = value;
+            if (dayjs(endTime).diff(startTime, "day", true) > maxDiffInDay) {
+              return helper.message({
+                custom: `Invalid datetime range. Please adjust ≤ ${maxDiffInDay} days`,
+              });
+            }
+            return value;
+          })
+          .required()
+          .concat(validPagination),
       });
     }
 
@@ -62,6 +87,13 @@ export function mixinMirrorX<T extends Constructor>(
         url: "/open-api/v1/mirrorX/order/check",
         method: "GET",
         params,
+        schema: Joi.object({
+          mirrorXLinkId: Joi.string().required(),
+          coinSymbol: Joi.string().required(),
+          orderType: Joi.number()
+            .valid(MirrorXOrderType.Delegation, MirrorXOrderType.Undelegation)
+            .required(),
+        }).required(),
       });
     }
 
@@ -72,6 +104,12 @@ export function mixinMirrorX<T extends Constructor>(
         url: "/open-api/v1/mirrorX/positions/list",
         method: "GET",
         params,
+        schema: Joi.object({
+          mirrorXLinkId: Joi.string().required(),
+          excludeZeroAmountFlag: Joi.bool().optional(),
+        })
+          .required()
+          .concat(validPagination),
       });
     }
 
@@ -82,6 +120,15 @@ export function mixinMirrorX<T extends Constructor>(
         url: "/open-api/v1/mirrorX/order",
         method: "POST",
         params,
+        schema: Joi.object({
+          amount: Joi.string().required(),
+          coinSymbol: Joi.string().required(),
+          mirrorXLinkId: Joi.string().required(),
+          orderType: Joi.number()
+            .valid(MirrorXOrderType.Delegation, MirrorXOrderType.Undelegation)
+            .required(),
+          requestId: Joi.alternatives(Joi.number(), Joi.string()).required(),
+        }).required(),
       });
     }
   };

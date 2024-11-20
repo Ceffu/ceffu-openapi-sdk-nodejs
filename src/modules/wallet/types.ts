@@ -68,7 +68,7 @@ export type GetWalletListResponse = SuccessPaginatedResponse<
 export type GetAssetDetailParams = PaginationParams<{
   coinSymbol?: string;
   network?: string;
-  walletId: number;
+  walletId: string;
 }>;
 
 export type GetAssetDetailResponse = SuccessPaginatedResponse<{
@@ -93,7 +93,7 @@ export type GetWalletAssetSummaryResponse = SuccessResponse<{
 export type GetDepositAddressParams = {
   coinSymbol?: string;
   network: string;
-  walletId: number;
+  walletId: string;
 };
 
 export type GetDepositAddressResponse = SuccessResponse<{
@@ -106,7 +106,7 @@ export type GetDepositHistoryParams = PaginationParams<{
   endTime: number;
   network?: string;
   startTime: number;
-  walletId: number;
+  walletId: string;
 }>;
 
 export type Transaction = {
@@ -151,7 +151,7 @@ export type GetWithdrawalFeeParams = {
   coinSymbol: string;
   network: string;
   toWalletIdStr?: string;
-  walletId: number;
+  walletId: string;
 };
 
 export type GetWithdrawalFeeResponse = SuccessResponse<{
@@ -168,7 +168,7 @@ export type GetWithdrawalHistoryParams = PaginationParams<{
   network?: string;
   startTime: number;
   status?: TransactionStatus;
-  walletId: number;
+  walletId: string;
 }>;
 
 export type GetWithdrawalHistoryResponse =
@@ -205,10 +205,10 @@ export type PostWithdrawalParams = {
   amount: string;
   coinSymbol: string;
   network: string;
-  toWalletIdStr: string;
+  toWalletIdStr?: string;
   walletId: string;
   requestId: string | number;
-  withdrawalAddress: string;
+  withdrawalAddress?: string;
   customizeFeeAmount?: string;
   memo?: string;
 };

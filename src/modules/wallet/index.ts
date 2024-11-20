@@ -1,4 +1,15 @@
+import dayjs from "dayjs";
+import Joi from "joi";
+
 import { Constructor, PaginationParams } from "../../types";
+import {
+  validBizType,
+  validPagination,
+  validParentWalletType,
+  validTransactionStatus,
+  validWalletType,
+  validYearMonthDay,
+} from "../../types/schema";
 
 import {
   GetAssetDetailParams,
@@ -92,6 +103,7 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/list",
         method: "GET",
         params,
+        schema: validPagination,
       });
     }
 
@@ -102,6 +114,13 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/asset/list",
         method: "GET",
         params,
+        schema: Joi.object({
+          walletId: Joi.string().required(),
+          network: Joi.string().optional(),
+          coinSymbol: Joi.string().optional(),
+        })
+          .required()
+          .concat(validPagination),
       });
     }
 
@@ -112,6 +131,9 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/asset/summary",
         method: "GET",
         params,
+        schema: Joi.object({
+          walletIdStr: Joi.string().required(),
+        }).required(),
       });
     }
 
@@ -122,6 +144,11 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/deposit/address",
         method: "GET",
         params,
+        schema: Joi.object({
+          walletId: Joi.string().required(),
+          network: Joi.string().required(),
+          coinSymbol: Joi.string().optional(),
+        }).required(),
       });
     }
 
@@ -132,6 +159,15 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/deposit/history",
         method: "GET",
         params,
+        schema: Joi.object({
+          walletId: Joi.string().required(),
+          startTime: Joi.number().required(),
+          endTime: Joi.number().required(),
+          network: Joi.string().optional(),
+          coinSymbol: Joi.string().optional(),
+        })
+          .required()
+          .concat(validPagination),
       });
     }
 
@@ -142,6 +178,14 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v2/wallet/deposit/detail",
         method: "GET",
         params,
+        schema: Joi.object({
+          txId: Joi.string().optional(),
+          orderViewId: Joi.string().optional(),
+          address: Joi.string().optional(),
+          memo: Joi.string().optional(),
+        })
+          .or("txId", "orderViewId")
+          .required(),
       });
     }
 
@@ -152,6 +196,13 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/withdrawal/fee",
         method: "GET",
         params,
+        schema: Joi.object({
+          walletId: Joi.string().required(),
+          network: Joi.string().required(),
+          coinSymbol: Joi.string().required(),
+          toWalletIdStr: Joi.string().optional(),
+          amount: Joi.string().optional(),
+        }).required(),
       });
     }
 
@@ -162,6 +213,16 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v2/wallet/withdrawal/history",
         method: "GET",
         params,
+        schema: Joi.object({
+          walletId: Joi.string().required(),
+          startTime: Joi.number().required(),
+          endTime: Joi.number().required(),
+          network: Joi.string().optional(),
+          coinSymbol: Joi.string().optional(),
+          status: validTransactionStatus.optional(),
+        })
+          .required()
+          .concat(validPagination),
       });
     }
 
@@ -172,6 +233,12 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v2/wallet/withdrawal/detail",
         method: "GET",
         params,
+        schema: Joi.object({
+          orderViewId: Joi.string().optional(),
+          requestId: Joi.alternatives(Joi.number(), Joi.string()).optional(),
+        })
+          .or("orderViewId", "requestId")
+          .required(),
       });
     }
 
@@ -182,6 +249,11 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/create",
         method: "POST",
         params,
+        schema: Joi.object({
+          walletName: Joi.string().max(20).required(),
+          walletType: validParentWalletType.required(),
+          requestId: Joi.alternatives(Joi.number(), Joi.string()).optional(),
+        }).required(),
       });
     }
 
@@ -192,6 +264,11 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/updateWallet",
         method: "POST",
         params,
+        schema: Joi.object({
+          walletId: Joi.string().required(),
+          walletName: Joi.string().max(20).optional(),
+          requestId: Joi.alternatives(Joi.number(), Joi.string()).optional(),
+        }).required(),
       });
     }
 
@@ -202,6 +279,19 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v2/wallet/withdrawal",
         method: "POST",
         params,
+        schema: Joi.object({
+          walletId: Joi.string().required(),
+          amount: Joi.string().required(),
+          network: Joi.string().required(),
+          coinSymbol: Joi.string().required(),
+          requestId: Joi.string().max(70).required(),
+          toWalletIdStr: Joi.string().optional(),
+          withdrawalAddress: Joi.string().optional(),
+          getCustomizeFeeAmount: Joi.string().optional(),
+          memo: Joi.string().optional(),
+        })
+          .xor("toWalletIdStr", "withdrawalAddress")
+          .required(),
       });
     }
 
@@ -212,6 +302,30 @@ export function mixinWallet<T extends Constructor>(
         url: "/open-api/v1/wallet/transaction/history",
         method: "POST",
         params,
+        schema: Joi.object({
+          institutionId: Joi.string().required(),
+          walletType: validWalletType.required(),
+          startDate: validYearMonthDay.required(),
+          endDate: validYearMonthDay.required(),
+          walletIds: Joi.array().items(Joi.string().required()).optional(),
+          networks: Joi.array().items(Joi.string().required()).optional(),
+          symbols: Joi.array().items(Joi.string().required()).optional(),
+          bizTypes: Joi.array().items(validBizType.required()).optional(),
+          txId: Joi.string().optional(),
+          pageLimit: Joi.number().min(1).max(100).optional(),
+          pageNo: Joi.number().min(1).optional(),
+        })
+          .custom((value, helper) => {
+            const maxDiffInMonth = 3;
+            const { startDate, endDate } = value;
+            if (dayjs(endDate).diff(startDate, "month") > maxDiffInMonth) {
+              return helper.message({
+                custom: `Invalid datetime range. Please adjust ≤ ${maxDiffInMonth} months`,
+              });
+            }
+            return value;
+          })
+          .required(),
       });
     }
   };

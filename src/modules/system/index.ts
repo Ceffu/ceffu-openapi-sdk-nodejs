@@ -1,4 +1,7 @@
+import Joi from "joi";
+
 import { Constructor } from "../../types";
+import { validBizType, validWalletType } from "../../types/schema";
 
 import { GetSystemStatusParams, GetSystemStatusResponse } from "./types";
 
@@ -19,6 +22,10 @@ export function mixinSystem<T extends Constructor>(
         url: "/open-api/v1/system/status",
         method: "GET",
         params,
+        schema: Joi.object({
+          bizType: validBizType.required(),
+          walletType: validWalletType.required(),
+        }).required(),
       });
     }
   };

@@ -101,7 +101,7 @@ export type GetSubWalletTransferHistoryParams = PaginationParams<{
   endTime: number;
   coinSymbol?: string;
   network?: string;
-  direction: TransferDirection;
+  direction?: TransferDirection;
 }>;
 
 type Transfer = {
