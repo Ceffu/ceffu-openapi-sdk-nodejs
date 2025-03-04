@@ -8,16 +8,16 @@ To start with, create an api key on [Ceffu](https://www.ceffu.com) platform. If 
 
 ```
 // install through npm
-npm install ceffu-openapi-sdk
+npm install @ceffu_custody/ceffu-openapi-sdk
 
 // or install through yarn
-yarn add ceffu-openapi-sdk
+yarn add @ceffu_custody/ceffu-openapi-sdk
 ```
 
 ## Example:
 
 ```typescript
-const { APIClient, Enum } = require("ceffu-openapi-sdk");
+const { APIClient, Enum } = require("@ceffu_custody/ceffu-openapi-sdk");
 
 const apiKey = "...";
 const apiSecret = "...";
