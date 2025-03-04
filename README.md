@@ -54,4 +54,4 @@ try {
 
 You can find the Ceffu OpenAPI documentation at [here](https://apidoc.ceffu.io/apidoc/shared-c9ece2c6-3ab4-4667-bb7d-c527fb3dbf78/doc-338167)
 
-If you require immediate assistance, we recommend you to speak with your Account Manager or contact our Support team.To facilitate debugging, please provide the requestId along with the api request.
+If you require immediate assistance, we recommend you to speak with your Account Manager or contact our Support team. To facilitate debugging, please provide the requestId along with the api request.

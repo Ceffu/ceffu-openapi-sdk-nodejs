@@ -113,6 +113,7 @@ export type Transaction = {
   amount: string;
   coinSymbol: string;
   confirmedBlockCount?: number | null;
+  currentBlock: number | null;
   direction: TransactionDirection;
   feeAmount?: null | string;
   feeSymbol?: null | string;

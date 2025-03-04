@@ -28,5 +28,16 @@
     "joi": "^17.13.3"
   },
   "description": "A Typescript sdk for Ceffu Openapi",
-  "author": ""
+  "author": "Ceffu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ceffu/ceffu-openapi-sdk-nodejs.git"
+  },
+  "keywords": [
+    "Ceffu Node.js SDK"
+  ],
+  "bugs": {
+    "url": "https://github.com/Ceffu/ceffu-openapi-sdk-nodejs/issues"
+  },
+  "homepage": "https://github.com/Ceffu/ceffu-openapi-sdk-nodejs#readme"
 }
