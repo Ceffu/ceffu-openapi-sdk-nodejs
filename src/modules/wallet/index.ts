@@ -69,6 +69,16 @@ export type WalletMethods = {
   getWithdrawalDetail(
     params: GetWithdrawalDetailParams
   ): Promise<GetWithdrawalDetailResponse>;
+  postCreateWallet(
+    params: PostCreateWalletParams
+  ): Promise<PostCreateWalletResponse>;
+  postUpdateWalletDetail(
+    params: PostUpdateWalletDetailParams
+  ): Promise<PostUpdateWalletDetailResponse>;
+  postWithdrawal(params: PostWithdrawalParams): Promise<PostWithdrawalResponse>;
+  postTransactionHistory(
+    params: PostTransactionHistoryParams
+  ): Promise<PostTransactionHistoryResponse>;
 };
 
 export function mixinWallet<T extends Constructor>(
