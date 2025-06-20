@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import Joi from "joi";
 
 import { Constructor, PaginationParams } from "../../types";
+import { AddressType } from "../../types/enum";
 import {
   validBizType,
   validPagination,
@@ -14,6 +15,7 @@ import {
 import {
   GetAssetDetailParams,
   GetAssetDetailResponse,
+  GetCorrespondentOptionsResponse,
   GetCosignWalletSupportedCoinListResponse,
   GetDepositAddressParams,
   GetDepositAddressResponse,
@@ -26,12 +28,16 @@ import {
   GetWalletAssetSummaryParams,
   GetWalletAssetSummaryResponse,
   GetWalletListResponse,
+  GetWhitelistedAddressListParams,
+  GetWhitelistedAddressListResponse,
   GetWithdrawalDetailParams,
   GetWithdrawalDetailResponse,
   GetWithdrawalFeeParams,
   GetWithdrawalFeeResponse,
   GetWithdrawalHistoryParams,
   GetWithdrawalHistoryResponse,
+  PostAddOrEditWhitelistedAddressParams,
+  PostAddOrEditWhitelistedAddressResponse,
   PostCreateWalletParams,
   PostCreateWalletResponse,
   PostTransactionHistoryParams,
@@ -69,6 +75,10 @@ export type WalletMethods = {
   getWithdrawalDetail(
     params: GetWithdrawalDetailParams
   ): Promise<GetWithdrawalDetailResponse>;
+  getWhitelistedAddressList(
+    params: GetWhitelistedAddressListParams
+  ): Promise<GetWhitelistedAddressListResponse>;
+  getCorrespondentOptions(): Promise<GetCorrespondentOptionsResponse>;
   postCreateWallet(
     params: PostCreateWalletParams
   ): Promise<PostCreateWalletResponse>;
@@ -79,6 +89,9 @@ export type WalletMethods = {
   postTransactionHistory(
     params: PostTransactionHistoryParams
   ): Promise<PostTransactionHistoryResponse>;
+  postAddOrEditWhitelistedAddress(
+    params: PostAddOrEditWhitelistedAddressParams
+  ): Promise<PostAddOrEditWhitelistedAddressResponse>;
 };
 
 export function mixinWallet<T extends Constructor>(
@@ -252,6 +265,38 @@ export function mixinWallet<T extends Constructor>(
       });
     }
 
+    async getWhitelistedAddressList(
+      params: GetWhitelistedAddressListParams
+    ): Promise<GetWhitelistedAddressListResponse> {
+      return await this.request({
+        url: "/open-api/v1/wallet/pageWhitelist",
+        method: "GET",
+        params,
+        schema: Joi.object({
+          addressType: Joi.number()
+            .valid(AddressType.Standard, AddressType.Universal)
+            .optional(),
+          address: Joi.string().optional(),
+          label: Joi.string().optional(),
+          symbol: Joi.string().optional(),
+          network: Joi.string().optional(),
+          memo: Joi.string().optional(),
+          whitelistId: Joi.string().optional(),
+          startTime: Joi.number().optional(),
+          endTime: Joi.number().optional(),
+          pageLimit: Joi.number().min(1).max(500).optional(),
+          pageNo: Joi.number().min(1).optional(),
+        }).optional(),
+      });
+    }
+
+    async getCorrespondentOptions(): Promise<GetCorrespondentOptionsResponse> {
+      return await this.request({
+        url: "/open-api/v1/wallet/whitelist/options",
+        method: "GET",
+      });
+    }
+
     async postCreateWallet(
       params: PostCreateWalletParams
     ): Promise<PostCreateWalletResponse> {
@@ -336,6 +381,28 @@ export function mixinWallet<T extends Constructor>(
             return value;
           })
           .required(),
+      });
+    }
+
+    async postAddOrEditWhitelistedAddress(
+      params: PostAddOrEditWhitelistedAddressParams
+    ): Promise<PostAddOrEditWhitelistedAddressResponse> {
+      return await this.request({
+        url: "/open-api/v1/wallet/addWhitelist",
+        method: "POST",
+        params,
+        schema: Joi.object({
+          address: Joi.string().required(),
+          addressType: Joi.number()
+            .valid(AddressType.Standard, AddressType.Universal)
+            .optional(),
+          correspondentDetail: Joi.object().optional(),
+          label: Joi.string().required(),
+          memo: Joi.string().optional(),
+          network: Joi.string().required(),
+          symbol: Joi.string().required(),
+          whitelistId: Joi.string().optional(),
+        }).required(),
       });
     }
   };

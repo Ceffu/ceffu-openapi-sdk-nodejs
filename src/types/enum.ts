@@ -98,3 +98,26 @@ export enum WebhookEventType {
   WithdrawalSuccess = 3,
   WithdrawalFailed = 4,
 }
+
+export enum AddressType {
+  Standard = 1,
+  Universal = 2,
+}
+
+export enum AddressStatus {
+  Pending = 10,
+  InProgress = 20,
+  Success = 30,
+  Failed = 99,
+}
+
+export enum ToFromType {
+  VASP = 0,
+  UnhostedWallet = 1,
+  Others = 2,
+}
+
+export enum CorrespondentType {
+  Entity = 0,
+  Individual = 1,
+}
