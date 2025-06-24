@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import Joi from "joi";
 
 import { Constructor, PaginationParams } from "../../types";
-import { AddressType } from "../../types/enum";
+import { AddressType, CorrespondentType, ToFromType } from "../../types/enum";
 import {
   validBizType,
   validPagination,
@@ -396,7 +396,25 @@ export function mixinWallet<T extends Constructor>(
           addressType: Joi.number()
             .valid(AddressType.Standard, AddressType.Universal)
             .optional(),
-          correspondentDetail: Joi.object().optional(),
+          correspondentDetail: Joi.object({
+            firstName: Joi.string().optional(),
+            lastName: Joi.string().optional(),
+            fullName: Joi.string().optional(),
+            birthday: Joi.string().optional(),
+            provider: Joi.string().optional(),
+            countryInfo: Joi.string().optional(),
+            toFromType: Joi.number()
+              .valid(
+                ToFromType.VASP,
+                ToFromType.UnhostedWallet,
+                ToFromType.Others
+              )
+              .optional(),
+            correspondentType: Joi.number()
+              .valid(CorrespondentType.Entity, CorrespondentType.Individual)
+              .optional(),
+            othersPleaseSpecify: Joi.string().optional(),
+          }).optional(),
           label: Joi.string().required(),
           memo: Joi.string().optional(),
           network: Joi.string().required(),
