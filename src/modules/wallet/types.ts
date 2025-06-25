@@ -4,7 +4,11 @@ import {
   SuccessResponse,
 } from "../../types";
 import {
+  AddressStatus,
+  AddressType,
   BizType,
+  CorrespondentType,
+  ToFromType,
   TransactionDirection,
   TransactionStatus,
   TransferType,
@@ -244,3 +248,80 @@ type AssetLog = {
 };
 
 export type PostTransactionHistoryResponse = SuccessPaginatedResponse<AssetLog>;
+
+type CorrespondentDetail = {
+  birthday?: string;
+  correspondentType?: CorrespondentType;
+  countryInfo?: string;
+  firstName?: string;
+  fullName?: string;
+  lastName?: string;
+  othersPleaseSpecify?: string;
+  provider?: string;
+  toFromType?: ToFromType;
+};
+
+type WhitelistedAddress = {
+  address: string;
+  addressStatus: AddressStatus;
+  addressType: AddressType;
+  correspondentDetail?: null | CorrespondentDetail;
+  createTime: number;
+  currentAddressStatus: AddressStatus;
+  institutionId: string;
+  label: string;
+  memo?: null | string;
+  network: string;
+  protocol: null | string;
+  symbol: string;
+  updateTime: number;
+  whitelistId: string;
+};
+
+export type GetWhitelistedAddressListParams = PaginationParams<
+  Partial<
+    Pick<
+      WhitelistedAddress,
+      | "address"
+      | "addressType"
+      | "label"
+      | "memo"
+      | "network"
+      | "symbol"
+      | "whitelistId"
+    > & {
+      startTime?: number;
+      endTime?: number;
+    }
+  >
+>;
+
+export type GetWhitelistedAddressListResponse =
+  SuccessPaginatedResponse<WhitelistedAddress>;
+
+export type GetCorrespondentOptionsResponse = {
+  options: {
+    addressType: Record<string, string>;
+    toFromType: Record<string, string>;
+    correspondentType: Record<string, string>;
+    countryOfDomicileIncorporation: {
+      name: string;
+    }[];
+  };
+};
+
+export type PostAddOrEditWhitelistedAddressParams = {
+  address: string;
+  addressType: AddressType;
+  correspondentDetail?: null | CorrespondentDetail;
+  label: string;
+  memo?: string;
+  network: string;
+  symbol: string;
+  whitelistId?: null | string;
+};
+
+export type PostAddOrEditWhitelistedAddressResponse = {
+  approveId: null | string;
+  whitelistId: string;
+};
