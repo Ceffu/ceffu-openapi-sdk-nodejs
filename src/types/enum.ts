@@ -113,11 +113,16 @@ export enum AddressStatus {
 
 export enum ToFromType {
   VASP = 0,
-  UnhostedWallet = 1,
+  SelfHostedWallet = 1,
   Others = 2,
 }
 
 export enum CorrespondentType {
   Entity = 0,
   Individual = 1,
+}
+
+export enum Confirmation {
+  Confirmed = "confirmed",
+  Unconfirmed = "unconfirmed",
 }

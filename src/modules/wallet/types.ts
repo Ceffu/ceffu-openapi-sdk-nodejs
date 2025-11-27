@@ -7,6 +7,7 @@ import {
   AddressStatus,
   AddressType,
   BizType,
+  Confirmation,
   CorrespondentType,
   ToFromType,
   TransactionDirection,
@@ -255,9 +256,11 @@ type CorrespondentDetail = {
   countryInfo?: string;
   firstName?: string;
   fullName?: string;
+  jurisdictionVaspCode?: string;
   lastName?: string;
   othersPleaseSpecify?: string;
   provider?: string;
+  selfHostedWalletProvider?: string;
   toFromType?: ToFromType;
 };
 
@@ -302,17 +305,34 @@ export type GetWhitelistedAddressListResponse =
 export type GetCorrespondentOptionsResponse = {
   options: {
     addressType: Record<string, string>;
-    toFromType: Record<string, string>;
+    confirmation: string[];
     correspondentType: Record<string, string>;
     countryOfDomicileIncorporation: {
+      areaCode: string;
+      countryCode: string;
+      icon: string;
+      name: string;
+      status: string;
+    }[];
+    jurisdictionVaspItem: {
+      areaCode: string;
+      countryCode: string;
+      icon: string;
+      name: string;
+      status: string;
+    }[];
+    listOfVASP: {
+      jurisdictionRequired: boolean;
       name: string;
     }[];
+    toFromType: Record<string, string>;
   };
 };
 
 export type PostAddOrEditWhitelistedAddressParams = {
   address: string;
   addressType: AddressType;
+  confirmation: Confirmation;
   correspondentDetail?: null | CorrespondentDetail;
   label: string;
   memo?: string;

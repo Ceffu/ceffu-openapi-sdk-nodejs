@@ -2,7 +2,12 @@ import dayjs from "dayjs";
 import Joi from "joi";
 
 import { Constructor, PaginationParams } from "../../types";
-import { AddressType, CorrespondentType, ToFromType } from "../../types/enum";
+import {
+  AddressType,
+  Confirmation,
+  CorrespondentType,
+  ToFromType,
+} from "../../types/enum";
 import {
   validBizType,
   validPagination,
@@ -400,13 +405,16 @@ export function mixinWallet<T extends Constructor>(
             firstName: Joi.string().optional(),
             lastName: Joi.string().optional(),
             fullName: Joi.string().optional(),
-            birthday: Joi.string().optional(),
+            birthday: Joi.string()
+              .pattern(/^\d{4}-\d{2}-\d{2}$/)
+              .optional(),
             provider: Joi.string().optional(),
+            selfHostedWalletProvider: Joi.string().optional(),
             countryInfo: Joi.string().optional(),
             toFromType: Joi.number()
               .valid(
                 ToFromType.VASP,
-                ToFromType.UnhostedWallet,
+                ToFromType.SelfHostedWallet,
                 ToFromType.Others
               )
               .optional(),
@@ -414,7 +422,41 @@ export function mixinWallet<T extends Constructor>(
               .valid(CorrespondentType.Entity, CorrespondentType.Individual)
               .optional(),
             othersPleaseSpecify: Joi.string().optional(),
-          }).optional(),
+            confirmation: Joi.string()
+              .valid(Confirmation.Confirmed, Confirmation.Unconfirmed)
+              .required(),
+          })
+            .optional()
+            .when("correspondentType", {
+              is: CorrespondentType.Individual,
+              then: Joi.object({
+                firstName: Joi.string().required(),
+                lastName: Joi.string().required(),
+                birthday: Joi.string()
+                  .pattern(/^\d{4}-\d{2}-\d{2}$/)
+                  .required(),
+              }),
+            })
+            .when("correspondentType", {
+              is: CorrespondentType.Entity,
+              then: Joi.object({ fullName: Joi.string().required() }),
+            })
+            .when("toFromType", {
+              is: ToFromType.VASP,
+              then: Joi.object({ provider: Joi.string().required() }),
+            })
+            .when("toFromType", {
+              is: ToFromType.SelfHostedWallet,
+              then: Joi.object({
+                selfHostedWalletProvider: Joi.string().required(),
+              }),
+            })
+            .when("toFromType", {
+              is: ToFromType.Others,
+              then: Joi.object({
+                othersPleaseSpecify: Joi.string().required(),
+              }),
+            }),
           label: Joi.string().required(),
           memo: Joi.string().optional(),
           network: Joi.string().required(),

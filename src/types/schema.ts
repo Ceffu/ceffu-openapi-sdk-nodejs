@@ -74,7 +74,7 @@ export const validTransferDirection = Joi.number().valid(
 
 export const validAutoCollection = Joi.number().valid(
   AutoCollection.Off,
-  AutoCollection.Off
+  AutoCollection.On
 );
 
 export const validMirrorXOrderType = Joi.number().valid(
