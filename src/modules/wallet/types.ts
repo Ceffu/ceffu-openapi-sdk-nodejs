@@ -228,7 +228,6 @@ export type PostWithdrawalResponse = {
 export type PostTransactionHistoryParams = PaginationParams<{
   bizTypes?: BizType[];
   endDate: string;
-  institutionId: string;
   networks?: string[];
   startDate: string;
   symbols?: string[];
