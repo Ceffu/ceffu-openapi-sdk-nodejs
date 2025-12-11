@@ -363,7 +363,6 @@ export function mixinWallet<T extends Constructor>(
         method: "POST",
         params,
         schema: Joi.object({
-          institutionId: Joi.string().required(),
           walletType: validWalletType.required(),
           startDate: validYearMonthDay.required(),
           endDate: validYearMonthDay.required(),
